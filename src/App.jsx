@@ -9,6 +9,7 @@ import StudentManagement from "./components/StudentManagement";
 import TeacherLayout from "./components/TeacherLayout";
 import StudentLayout from "./components/StudentLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CourseManagement from "./components/CourseManagement";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="teachers" element={<TeacherManagement />} />
           <Route path="students" element={<StudentManagement />} />
+          <Route path="courses" element={<CourseManagement />} />
         </Route>
 
         {/* Teacher Routes */}
@@ -44,7 +46,6 @@ function App() {
           }
         >
           <Route index element={<Navigate to="dashboard" />} />
-          {/* Add teacher specific routes here */}
         </Route>
 
         {/* Student Routes */}
@@ -57,10 +58,8 @@ function App() {
           }
         >
           <Route index element={<Navigate to="dashboard" />} />
-          {/* Add student specific routes here */}
         </Route>
 
-        {/* Catch all route */}
         <Route path="*" element={<Navigate to="/signin" />} />
       </Routes>
     </Router>
