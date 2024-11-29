@@ -1,78 +1,75 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NewCourses() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: '',
-    category: 'development',
-    description: '',
-    instructor: '',
-    price: '',
-    level: 'Beginner',
-    image: '',
-    rating: 4.5, // Default rating
-    students: 0 // Default students count
+    title: "",
+    category: "development",
+    description: "",
+    instructor: "",
+    price: "",
+    level: "Beginner",
+    image: "",
+    rating: 4.5,
+    students: 0,
+    status: 'active',
+    joinDate: new Date().toISOString().split('T')[0]
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const categories = [
-    { id: 'development', name: 'Development' },
-    { id: 'data', name: 'Data Science' },
-    { id: 'marketing', name: 'Marketing' },
-    { id: 'design', name: 'Design' }
+    { id: "development", name: "Development" },
+    { id: "data", name: "Data Science" },
+    { id: "marketing", name: "Marketing" },
+    { id: "design", name: "Design" },
   ];
 
-  const levels = ['Beginner', 'Intermediate', 'Advanced'];
+  const levels = ["Beginner", "Intermediate", "Advanced"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError('');
+    setError("");
 
     try {
-      // Format price to include $ if not present
       let formattedPrice = formData.price;
-      if (!formattedPrice.startsWith('$')) {
+      if (!formattedPrice.startsWith("$")) {
         formattedPrice = `$${formattedPrice}`;
       }
 
-      // Get existing courses from localStorage or initialize empty array
-      const existingCourses = JSON.parse(localStorage.getItem('courses') || '[]');
+      const existingCourses = JSON.parse(localStorage.getItem("courses") || "[]");
 
-      // Create new course object with formatted price and generated ID
       const newCourse = {
         ...formData,
         id: existingCourses.length + 1,
         price: formattedPrice,
         rating: 4.5,
-        students: 0
+        students: 0,
+        joinDate: new Date().toISOString().split('T')[0],
+        status: 'active'
       };
 
-      // Add new course to existing courses
       const updatedCourses = [...existingCourses, newCourse];
 
-      // Save to localStorage
-      localStorage.setItem('courses', JSON.stringify(updatedCourses));
+      localStorage.setItem("courses", JSON.stringify(updatedCourses));
 
-      // Show success message
-      alert('Course created successfully!');
+      alert("Course created successfully!");
 
-      // Navigate back to courses page
-      navigate('/courses');
+      navigate("/courses");
     } catch (error) {
-      setError('Failed to create course. Please try again.');
-      console.error('Error creating course:', error);
+      setError("Failed to create course. Please try again.");
+      console.error("Error creating course:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -86,11 +83,7 @@ function NewCourses() {
           <p className="text-gray-600">Fill in the details below to create a new course</p>
         </div>
 
-        {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
-            {error}
-          </div>
-        )}
+        {error && <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-sm">
           {/* Course Title */}
@@ -124,7 +117,7 @@ function NewCourses() {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                {categories.map(category => (
+                {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
@@ -144,7 +137,7 @@ function NewCourses() {
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                {levels.map(level => (
+                {levels.map((level) => (
                   <option key={level} value={level}>
                     {level}
                   </option>
@@ -226,7 +219,7 @@ function NewCourses() {
           <div className="flex justify-end space-x-4 pt-4">
             <button
               type="button"
-              onClick={() => navigate('/courses')}
+              onClick={() => navigate("/courses")}
               className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
@@ -235,10 +228,10 @@ function NewCourses() {
               type="submit"
               disabled={isSubmitting}
               className={`px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors ${
-                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isSubmitting ? 'Creating...' : 'Create Course'}
+              {isSubmitting ? "Creating..." : "Create Course"}
             </button>
           </div>
         </form>
