@@ -11,6 +11,7 @@ import StudentLayout from "./components/StudentLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CourseManagement from "./components/CourseManagement";
 import GradeManagement from "./components/GradeManagement";
+import Analytics from "./components/Analytics";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="students" element={<StudentManagement />} />
           <Route path="courses" element={<CourseManagement />} />
           <Route path="grades" element={<GradeManagement />} />
+          <Route path="analytics" element={<Analytics />} />
         </Route>
 
         {/* Teacher Routes */}
