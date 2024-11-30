@@ -2,6 +2,8 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 function ProtectedRoute({ children, role }) {
+  console.log(children);
+
   const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 

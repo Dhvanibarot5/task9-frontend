@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark mode styles */
+.dark {
+  @apply bg-gray-900 text-white;
+}
+
+.dark .bg-white {
+  @apply bg-gray-800;
+}
+
+.dark .text-gray-900 {
+  @apply text-white;
+}
+
+.dark .border-gray-300 {
+  @apply border-gray-600;
+}
+
+.dark select,
+.dark input {
+  @apply bg-gray-700 text-white border-gray-600;
+}
+
+/* Language-specific fonts */
+[lang="en"] {
+  font-family: 'Arial', sans-serif;
+}
+
+[lang="es"] {
+  font-family: 'Helvetica', sans-serif;
+}
+
+[lang="fr"] {
+  font-family: 'Roboto', sans-serif;
+}
+
+[lang="de"] {
+  font-family: 'Open Sans', sans-serif;
+}
+
+[lang="it"] {
+  font-family: 'Lato', sans-serif;
+}

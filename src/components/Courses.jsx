@@ -9,7 +9,7 @@ function Courses() {
   const [editingCourse, setEditingCourse] = useState(null);
 
   // Get user role from localStorage
-  const userStr = localStorage.getItem("user");
+  const userStr = localStorage.getItem("currentUser");
   const user = userStr ? JSON.parse(userStr) : null;
 
   const handleBack = () => {
@@ -139,15 +139,18 @@ function Courses() {
               onClick={handleBack}
               className="flex items-center px-5 py-2.5 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-all duration-200 group"
             >
-              <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Back to Dashboard
             </button>
             <div className="text-right">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-                Explore Courses
-              </h1>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">Explore Courses</h1>
               {user && (
                 <p className="text-gray-600 mt-1">
                   Welcome back, <span className="font-medium">{user.role}</span>
@@ -195,10 +198,12 @@ function Courses() {
           {filteredCourses.map((course) => (
             <div key={course.id} className="bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group">
               <div className="relative">
-                <img src={course.image} alt={course.title} className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300" />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl text-sm font-semibold">
-                  {course.price}
-                </div>
+                <img
+                  src={course.image}
+                  alt={course.title}
+                  className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl text-sm font-semibold">{course.price}</div>
                 <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl text-sm font-medium text-blue-600">
                   {course.category}
                 </div>
@@ -213,35 +218,42 @@ function Courses() {
                 <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 transition-colors">{course.title}</h3>
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
                   <div className="flex items-center">
-                    <img src={`https://ui-avatars.com/api/?name=${course.instructor}&background=random`} 
-                         alt={course.instructor} 
-                         className="w-6 h-6 rounded-full mr-2" />
+                    <img
+                      src={`https://ui-avatars.com/api/?name=${course.instructor}&background=random`}
+                      alt={course.instructor}
+                      className="w-6 h-6 rounded-full mr-2"
+                    />
                     <span>{course.instructor}</span>
                   </div>
                   <span className="flex items-center">
                     <svg className="w-5 h-5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
                     </svg>
                     {course.students} students
                   </span>
                 </div>
                 <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                   <div className="space-x-2">
-                    <button 
-                      onClick={() => handleEdit(course)} 
+                    <button
+                      onClick={() => handleEdit(course)}
                       className="px-4 py-2 text-sm bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition-colors"
                     >
                       Edit
                     </button>
-                    <button 
-                      onClick={() => handleDelete(course.id)} 
+                    <button
+                      onClick={() => handleDelete(course.id)}
                       className="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
                     >
                       Delete
                     </button>
                   </div>
-                  <Link 
-                    to={`/courses/${course.id}`} 
+                  <Link
+                    to={`/courses/${course.id}`}
                     className="flex items-center text-blue-600 hover:text-blue-700 font-medium group-hover:translate-x-1 transition-transform"
                   >
                     View Details
@@ -260,8 +272,12 @@ function Courses() {
           <div className="bg-white rounded-3xl shadow-sm p-12 text-center">
             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">No courses found</h3>

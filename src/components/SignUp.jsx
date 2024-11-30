@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaUser, FaEnvelope, FaLock, FaUserTag } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 
 function SignUp() {
   const navigate = useNavigate();
@@ -17,20 +17,22 @@ function SignUp() {
     setError('');
 
     try {
-      // Get existing users from localStorage
+      // Get existing users
       const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
 
       // Check if email already exists
       if (existingUsers.some(user => user.email.toLowerCase() === formData.email.toLowerCase())) {
-        setError('Email already exists. Please use a different email.');
+        setError('Email already exists');
         return;
       }
 
-      // Create new user
+      // Create new user with trimmed values
       const newUser = {
         id: Date.now().toString(),
-        ...formData,
-        createdAt: new Date().toISOString()
+        name: formData.name.trim(),
+        email: formData.email.toLowerCase().trim(),
+        password: formData.password.trim(),
+        role: formData.role
       };
 
       // Add to existing users
@@ -39,11 +41,11 @@ function SignUp() {
       // Save to localStorage
       localStorage.setItem('users', JSON.stringify(updatedUsers));
 
-      // Set current user
+      // Store current user
       localStorage.setItem('currentUser', JSON.stringify(newUser));
 
       // Redirect based on role
-      switch (formData.role) {
+      switch (newUser.role) {
         case 'admin':
           navigate('/admin/dashboard');
           break;
@@ -58,30 +60,36 @@ function SignUp() {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setError('An error occurred. Please try again.');
+      setError('Registration failed. Please try again.');
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link to="/signin" className="font-medium text-blue-600 hover:text-blue-500">
-            Sign in
-          </Link>
-        </p>
-      </div>
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 px-6">
+      <div className="max-w-md w-full mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/signin" className="text-blue-600 hover:text-blue-500">
+              Sign in here
+            </Link>
+          </p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-400 p-4">
-                <p className="text-sm text-red-700">{error}</p>
+              <div className="bg-red-50 text-red-500 p-3 rounded">
+                {error}
               </div>
             )}
 
@@ -89,42 +97,60 @@ function SignUp() {
               <label className="block text-sm font-medium text-gray-700">
                 Full Name
               </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                  <FaUser className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Email
               </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                  <FaEnvelope className="text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                  <FaLock className="text-gray-400" />
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
             </div>
 
             <div>
@@ -134,8 +160,9 @@ function SignUp() {
               <select
                 name="role"
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                onChange={handleChange}
+                className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                required
               >
                 <option value="student">Student</option>
                 <option value="teacher">Teacher</option>
@@ -145,7 +172,7 @@ function SignUp() {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Sign Up
             </button>

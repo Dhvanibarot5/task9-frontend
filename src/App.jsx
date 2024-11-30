@@ -12,9 +12,16 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CourseManagement from "./components/CourseManagement";
 import GradeManagement from "./components/GradeManagement";
 import Analytics from "./components/Analytics";
+import Settings from "./components/Settings";
+import TeacherDashboard from "./components/TeacherDashboard";
+import StudentDashboard from "./components/StudentDashboard";
+import Courses from "./components/Courses";
+import CourseDetails from "./components/CourseDetails";
+// import { ThemeProvider } from "./contexts/ThemeContext";
 
 function App() {
   return (
+    // <ThemeProvider>
     <Router>
       <Routes>
         {/* Public Routes */}
@@ -38,6 +45,7 @@ function App() {
           <Route path="courses" element={<CourseManagement />} />
           <Route path="grades" element={<GradeManagement />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Teacher Routes */}
@@ -50,6 +58,13 @@ function App() {
           }
         >
           <Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<TeacherDashboard />} />
+          <Route path="teachers" element={<TeacherManagement />} />
+          <Route path="students" element={<StudentManagement />} />
+          <Route path="courses" element={<CourseManagement />} />
+          <Route path="grades" element={<GradeManagement />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Student Routes */}
@@ -62,11 +77,15 @@ function App() {
           }
         >
           <Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="courses" element={<Courses />} />
+          <Route path="course/:id" element={<CourseDetails />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/signin" />} />
       </Routes>
     </Router>
+    // </ThemeProvider>
   );
 }
 
