@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FaBook, FaUsers, FaClipboardList, FaPlus } from "react-icons/fa";
+import { FaBook, FaClipboardList, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 function TeacherDashboard() {
-  // Initialize state with data from localStorage (admin-created data)
   const [courses, setCourses] = useState(() => {
     const savedCourses = localStorage.getItem("courses");
     return savedCourses ? JSON.parse(savedCourses) : [];
@@ -13,94 +12,74 @@ function TeacherDashboard() {
     return savedAssignments ? JSON.parse(savedAssignments) : [];
   });
 
-  const [teachers, setTeachers] = useState(() => {
-    const savedTeachers = localStorage.getItem("teachers");
-    return savedTeachers ? JSON.parse(savedTeachers) : [];
-  });
+  const [newCourse, setNewCourse] = useState({ id: "", name: "", description: "", duration: "" });
+  const [newAssignment, setNewAssignment] = useState({ id: "", title: "", description: "", dueDate: "", course: "" });
 
-  // State for modals
-  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [editingAssignment, setEditingAssignment] = useState(null);
 
-  // State for new assignment/course
-  const [newAssignment, setNewAssignment] = useState({
-    title: "",
-    description: "",
-    dueDate: "",
-    course: "",
-  });
-
-  const [newCourse, setNewCourse] = useState({
-    name: "",
-    description: "",
-    duration: "",
-  });
-
-  // Listen for changes in localStorage
   useEffect(() => {
-    const handleStorageChange = () => {
-      const savedCourses = localStorage.getItem("courses");
-      const savedAssignments = localStorage.getItem("assignments");
-      const savedTeachers = localStorage.getItem("teachers");
+    localStorage.setItem("courses", JSON.stringify(courses));
+    localStorage.setItem("assignments", JSON.stringify(assignments));
+  }, [courses, assignments]);
 
-      if (savedCourses) setCourses(JSON.parse(savedCourses));
-      if (savedAssignments) setAssignments(JSON.parse(savedAssignments));
-      if (savedTeachers) setTeachers(JSON.parse(savedTeachers));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  // Handle assignment creation
-  const handleAssignmentSubmit = (e) => {
+  const handleAddOrEditCourse = (e) => {
     e.preventDefault();
-    const assignment = {
-      id: Date.now(),
-      ...newAssignment,
-      createdBy: "teacher",
-    };
-    const updatedAssignments = [...assignments, assignment];
-    setAssignments(updatedAssignments);
-    localStorage.setItem("assignments", JSON.stringify(updatedAssignments));
-    setIsAssignmentModalOpen(false);
-    setNewAssignment({ title: "", description: "", dueDate: "", course: "" });
+    if (editingCourse) {
+      const updatedCourses = courses.map((course) => (course.id === editingCourse.id ? { ...course, ...newCourse } : course));
+      setCourses(updatedCourses);
+      setEditingCourse(null);
+    } else {
+      const courseToAdd = { id: Date.now(), ...newCourse };
+      setCourses([...courses, courseToAdd]);
+    }
+    setNewCourse({ id: "", name: "", description: "", duration: "" });
+    setIsCourseModalOpen(false);
   };
 
-  // Handle course creation
-  const handleCourseSubmit = (e) => {
+  const handleAddOrEditAssignment = (e) => {
     e.preventDefault();
-    const course = {
-      id: Date.now(),
-      ...newCourse,
-      createdBy: "teacher",
-    };
-    const updatedCourses = [...courses, course];
+    if (editingAssignment) {
+      const updatedAssignments = assignments.map((assignment) =>
+        assignment.id === editingAssignment.id ? { ...assignment, ...newAssignment } : assignment
+      );
+      setAssignments(updatedAssignments);
+      setEditingAssignment(null);
+    } else {
+      const assignmentToAdd = { id: Date.now(), ...newAssignment };
+      setAssignments([...assignments, assignmentToAdd]);
+    }
+    setNewAssignment({ id: "", title: "", description: "", dueDate: "", course: "" });
+    setIsAssignmentModalOpen(false);
+  };
+
+  const handleDeleteCourse = (id) => {
+    const updatedCourses = courses.filter((course) => course.id !== id);
     setCourses(updatedCourses);
-    localStorage.setItem("courses", JSON.stringify(updatedCourses));
-    setIsCourseModalOpen(false);
-    setNewCourse({ name: "", description: "", duration: "" });
+  };
+
+  const handleDeleteAssignment = (id) => {
+    const updatedAssignments = assignments.filter((assignment) => assignment.id !== id);
+    setAssignments(updatedAssignments);
+  };
+
+  const openEditCourseModal = (course) => {
+    setNewCourse(course);
+    setEditingCourse(course);
+    setIsCourseModalOpen(true);
+  };
+
+  const openEditAssignmentModal = (assignment) => {
+    setNewAssignment(assignment);
+    setEditingAssignment(assignment);
+    setIsAssignmentModalOpen(true);
   };
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Teacher Dashboard</h1>
-
-      {/* Dashboard Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-blue-500 text-white p-4 rounded-lg">
-          <h3 className="text-lg">Total Courses</h3>
-          <p className="text-2xl font-bold">{courses.length}</p>
-        </div>
-        <div className="bg-green-500 text-white p-4 rounded-lg">
-          <h3 className="text-lg">Total Assignments</h3>
-          <p className="text-2xl font-bold">{assignments.length}</p>
-        </div>
-        <div className="bg-purple-500 text-white p-4 rounded-lg">
-          <h3 className="text-lg">Total Teachers</h3>
-          <p className="text-2xl font-bold">{teachers.length}</p>
-        </div>
-      </div>
 
       {/* Quick Action Buttons */}
       <div className="flex gap-4 mb-8">
@@ -124,12 +103,17 @@ function TeacherDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {courses.map((course) => (
             <div key={course.id} className="bg-white p-4 rounded-lg shadow">
-              <div className="flex justify-between items-start">
-                <h3 className="font-semibold">{course.name}</h3>
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded">{course.createdBy === "admin" ? "Added by Admin" : "Admin Created"}</span>
-              </div>
+              <h3 className="font-semibold">{course.name}</h3>
               <p className="text-gray-600 text-sm mt-2">{course.description}</p>
               <p className="text-gray-500 text-sm mt-2">Duration: {course.duration}</p>
+              <div className="flex justify-between mt-4">
+                <button onClick={() => openEditCourseModal(course)} className="text-blue-500 hover:underline">
+                  <FaEdit /> Edit
+                </button>
+                <button onClick={() => handleDeleteCourse(course.id)} className="text-red-500 hover:underline">
+                  <FaTrash /> Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -141,91 +125,29 @@ function TeacherDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {assignments.map((assignment) => (
             <div key={assignment.id} className="bg-white p-4 rounded-lg shadow">
-              <div className="flex justify-between items-start">
-                <h3 className="font-semibold">{assignment.title}</h3>
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                  {assignment.createdBy === "admin" ? "Added by Admin" : "Admin Created"}
-                </span>
-              </div>
+              <h3 className="font-semibold">{assignment.title}</h3>
               <p className="text-gray-600 text-sm mt-2">{assignment.description}</p>
               <p className="text-gray-500 text-sm mt-2">Due: {assignment.dueDate}</p>
               <p className="text-gray-500 text-sm">Course: {assignment.course}</p>
+              <div className="flex justify-between mt-4">
+                <button onClick={() => openEditAssignmentModal(assignment)} className="text-blue-500 hover:underline">
+                  <FaEdit /> Edit
+                </button>
+                <button onClick={() => handleDeleteAssignment(assignment.id)} className="text-red-500 hover:underline">
+                  <FaTrash /> Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Assignment Modal */}
-      {isAssignmentModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Create New Assignment</h2>
-            <form onSubmit={handleAssignmentSubmit}>
-              {/* ... assignment form fields ... */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Title</label>
-                <input
-                  type="text"
-                  value={newAssignment.title}
-                  onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <textarea
-                  value={newAssignment.description}
-                  onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Due Date</label>
-                <input
-                  type="date"
-                  value={newAssignment.dueDate}
-                  onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Course</label>
-                <select
-                  value={newAssignment.course}
-                  onChange={(e) => setNewAssignment({ ...newAssignment, course: e.target.value })}
-                  className="w-full p-2 border rounded"
-                  required
-                >
-                  <option value="">Select Course</option>
-                  {courses.map((course) => (
-                    <option key={course.id} value={course.name}>
-                      {course.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <button type="button" onClick={() => setIsAssignmentModalOpen(false)} className="px-4 py-2 bg-gray-200 rounded">
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
-                  Create
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* Course Modal */}
       {isCourseModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Create New Course</h2>
-            <form onSubmit={handleCourseSubmit}>
+            <h2 className="text-xl font-bold mb-4">{editingCourse ? "Edit Course" : "Create New Course"}</h2>
+            <form onSubmit={handleAddOrEditCourse}>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Course Name</label>
                 <input
@@ -261,7 +183,65 @@ function TeacherDashboard() {
                   Cancel
                 </button>
                 <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded">
-                  Create
+                  {editingCourse ? "Update" : "Create"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Assignment Modal */}
+      {isAssignmentModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h2 className="text-xl font-bold mb-4">{editingAssignment ? "Edit Assignment" : "Create New Assignment"}</h2>
+            <form onSubmit={handleAddOrEditAssignment}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Title</label>
+                <input
+                  type="text"
+                  value={newAssignment.title}
+                  onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  value={newAssignment.description}
+                  onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Due Date</label>
+                <input
+                  type="date"
+                  value={newAssignment.dueDate}
+                  onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Course</label>
+                <input
+                  type="text"
+                  value={newAssignment.course}
+                  onChange={(e) => setNewAssignment({ ...newAssignment, course: e.target.value })}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setIsAssignmentModalOpen(false)} className="px-4 py-2 bg-gray-200 rounded">
+                  Cancel
+                </button>
+                <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded">
+                  {editingAssignment ? "Update" : "Create"}
                 </button>
               </div>
             </form>
