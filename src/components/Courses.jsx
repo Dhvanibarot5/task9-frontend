@@ -8,7 +8,7 @@ function Courses() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [editingCourse, setEditingCourse] = useState(null);
 
-  // Get user role from localStorage
+ 
   const userStr = localStorage.getItem("currentUser");
   const user = userStr ? JSON.parse(userStr) : null;
 
@@ -47,7 +47,7 @@ function Courses() {
     }
   };
 
-  // Start editing course
+  
   const handleEdit = (course) => {
     setEditingCourse(course);
   };
@@ -132,7 +132,7 @@ function Courses() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
       <div className="container mx-auto px-4">
-        {/* Enhanced Header Section */}
+        {/* Header Section */}
         <div className="bg-white rounded-3xl shadow-sm p-8 mb-8">
           <div className="flex items-center justify-between">
             <button
@@ -160,7 +160,7 @@ function Courses() {
           </div>
         </div>
 
-        {/* Enhanced Search and Filters */}
+        {/* Search and Filters */}
         <div className="bg-white rounded-3xl shadow-sm p-6 mb-8">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="relative flex-1">
@@ -193,7 +193,7 @@ function Courses() {
           </div>
         </div>
 
-        {/* Enhanced Courses Grid */}
+        {/* Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredCourses.map((course) => (
             <div key={course.id} className="bg-white rounded-3xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group">
@@ -267,7 +267,7 @@ function Courses() {
           ))}
         </div>
 
-        {/* Enhanced Empty State */}
+        {/* Empty State */}
         {filteredCourses.length === 0 && (
           <div className="bg-white rounded-3xl shadow-sm p-12 text-center">
             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">

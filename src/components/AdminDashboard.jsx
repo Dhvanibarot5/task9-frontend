@@ -59,7 +59,6 @@ function AdminDashboard() {
         ))}
       </div>
 
-      {/* Recent Activities Section */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Recent Activities</h2>
         <div className="bg-white rounded-lg shadow p-6">

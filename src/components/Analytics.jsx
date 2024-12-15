@@ -1,26 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  FaUsers, 
-  FaUserGraduate, 
-  FaChalkboardTeacher, 
-  FaBook,
-  FaChartLine 
-} from 'react-icons/fa';
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell
-} from 'recharts';
+import React, { useState, useEffect } from "react";
+import { FaUsers, FaUserGraduate, FaChalkboardTeacher, FaBook, FaChartLine } from "react-icons/fa";
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 
 function Analytics() {
   const [stats, setStats] = useState({
@@ -30,7 +10,7 @@ function Analytics() {
     averageGrade: 0,
     courseDistribution: [],
     gradesTrend: [],
-    studentPerformance: []
+    studentPerformance: [],
   });
 
   useEffect(() => {
@@ -39,26 +19,22 @@ function Analytics() {
 
   const calculateStats = () => {
     // Get data from localStorage
-    const students = JSON.parse(localStorage.getItem('students') || '[]');
-    const teachers = JSON.parse(localStorage.getItem('teachers') || '[]');
-    const courses = JSON.parse(localStorage.getItem('courses') || '[]');
-    const grades = JSON.parse(localStorage.getItem('grades') || '[]');
+    const students = JSON.parse(localStorage.getItem("students") || "[]");
+    const teachers = JSON.parse(localStorage.getItem("teachers") || "[]");
+    const courses = JSON.parse(localStorage.getItem("courses") || "[]");
+    const grades = JSON.parse(localStorage.getItem("grades") || "[]");
 
     // Calculate average grade
-    const averageGrade = grades.length 
-      ? grades.reduce((acc, curr) => acc + Number(curr.grade), 0) / grades.length 
-      : 0;
+    const averageGrade = grades.length ? grades.reduce((acc, curr) => acc + Number(curr.grade), 0) / grades.length : 0;
 
     // Calculate course distribution
-    const courseDistribution = courses.map(course => ({
+    const courseDistribution = courses.map((course) => ({
       name: course.title,
-      students: grades.filter(grade => grade.courseId === course.id).length
+      students: grades.filter((grade) => grade.courseId === course.id).length,
     }));
 
-    // Calculate grades trend (last 6 months)
     const gradesTrend = calculateGradesTrend(grades);
 
-    // Calculate student performance
     const studentPerformance = calculateStudentPerformance(grades, students);
 
     setStats({
@@ -68,32 +44,32 @@ function Analytics() {
       averageGrade: averageGrade.toFixed(1),
       courseDistribution,
       gradesTrend,
-      studentPerformance
+      studentPerformance,
     });
   };
 
   const calculateGradesTrend = (grades) => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const currentMonth = new Date().getMonth();
     const last6Months = Array.from({ length: 6 }, (_, i) => {
       const monthIndex = (currentMonth - i + 12) % 12;
       return months[monthIndex];
     }).reverse();
 
-    return last6Months.map(month => ({
+    return last6Months.map((month) => ({
       name: month,
-      average: (Math.random() * 30 + 70).toFixed(1) // Simulated data - replace with real calculation
+      average: (Math.random() * 30 + 70).toFixed(1), 
     }));
   };
 
   const calculateStudentPerformance = (grades, students) => {
-    return students.slice(0, 5).map(student => ({
+    return students.slice(0, 5).map((student) => ({
       name: student.name,
-      average: (Math.random() * 30 + 70).toFixed(1) // Simulated data - replace with real calculation
+      average: (Math.random() * 30 + 70).toFixed(1), 
     }));
   };
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
   return (
     <div className="p-6">
@@ -101,30 +77,10 @@ function Analytics() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          title="Total Students"
-          value={stats.totalStudents}
-          icon={<FaUserGraduate />}
-          color="bg-blue-500"
-        />
-        <StatCard
-          title="Total Teachers"
-          value={stats.totalTeachers}
-          icon={<FaChalkboardTeacher />}
-          color="bg-green-500"
-        />
-        <StatCard
-          title="Total Courses"
-          value={stats.totalCourses}
-          icon={<FaBook />}
-          color="bg-yellow-500"
-        />
-        <StatCard
-          title="Average Grade"
-          value={`${stats.averageGrade}%`}
-          icon={<FaChartLine />}
-          color="bg-purple-500"
-        />
+        <StatCard title="Total Students" value={stats.totalStudents} icon={<FaUserGraduate />} color="bg-blue-500" />
+        <StatCard title="Total Teachers" value={stats.totalTeachers} icon={<FaChalkboardTeacher />} color="bg-green-500" />
+        <StatCard title="Total Courses" value={stats.totalCourses} icon={<FaBook />} color="bg-yellow-500" />
+        <StatCard title="Average Grade" value={`${stats.averageGrade}%`} icon={<FaChartLine />} color="bg-purple-500" />
       </div>
 
       {/* Charts */}
@@ -140,13 +96,7 @@ function Analytics() {
                 <YAxis domain={[0, 100]} />
                 <Tooltip />
                 <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="average" 
-                  stroke="#8884d8" 
-                  strokeWidth={2}
-                  name="Average Grade"
-                />
+                <Line type="monotone" dataKey="average" stroke="#8884d8" strokeWidth={2} name="Average Grade" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -158,15 +108,7 @@ function Analytics() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={stats.courseDistribution}
-                  dataKey="students"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label
-                >
+                <Pie data={stats.courseDistribution} dataKey="students" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                   {stats.courseDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
@@ -190,11 +132,7 @@ function Analytics() {
               <YAxis domain={[0, 100]} />
               <Tooltip />
               <Legend />
-              <Bar 
-                dataKey="average" 
-                fill="#8884d8" 
-                name="Average Grade"
-              />
+              <Bar dataKey="average" fill="#8884d8" name="Average Grade" />
             </BarChart>
           </ResponsiveContainer>
         </div>
